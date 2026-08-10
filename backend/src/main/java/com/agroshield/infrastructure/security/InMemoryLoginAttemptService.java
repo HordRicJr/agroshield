@@ -36,9 +36,10 @@ public class InMemoryLoginAttemptService implements LoginAttemptService {
     }
 
     @Override
-    public void recordFailure(String accountKey, String ipKey) {
-        bump("acct:" + accountKey);
-        bump("ip:" + ipKey);
+    public boolean recordFailure(String accountKey, String ipKey) {
+        int acct = bump("acct:" + accountKey);
+        int ip = bump("ip:" + ipKey);
+        return acct >= maxAccount || ip >= maxIp;
     }
 
     @Override
@@ -61,8 +62,8 @@ public class InMemoryLoginAttemptService implements LoginAttemptService {
         }
     }
 
-    private void bump(String key) {
-        attempts.compute(key, (k, existing) -> {
+    private int bump(String key) {
+        Window updated = attempts.compute(key, (k, existing) -> {
             long expires = System.currentTimeMillis() + windowMillis;
             if (existing == null || existing.expired()) {
                 return new Window(new AtomicInteger(1), expires);
@@ -70,6 +71,7 @@ public class InMemoryLoginAttemptService implements LoginAttemptService {
             existing.count.incrementAndGet();
             return existing;
         });
+        return updated.count.get();
     }
 
     private static final class Window {

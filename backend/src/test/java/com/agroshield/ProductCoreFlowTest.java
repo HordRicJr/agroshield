@@ -102,6 +102,7 @@ class ProductCoreFlowTest {
                                 """.formatted(fileId)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.token").isNotEmpty())
+                .andExpect(jsonPath("$.data.publicPath").isNotEmpty())
                 .andExpect(jsonPath("$.data.note").isNotEmpty())
                 .andReturn();
 
@@ -109,6 +110,26 @@ class ProductCoreFlowTest {
                 .path("data").path("token").asText();
         String shareId = objectMapper.readTree(share.getResponse().getContentAsString())
                 .path("data").path("shareId").asText();
+
+        // snake_case aussi accepté (clients / docs mixtes)
+        mockMvc.perform(post("/api/v1/shares")
+                        .header("Authorization", "Bearer " + access)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "file_id": "%s",
+                                  "label": "Partenaire snake",
+                                  "allowed_columns": ["parcelle"],
+                                  "ttl_minutes": 15
+                                }
+                                """.formatted(fileId)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.token").isNotEmpty());
+
+        mockMvc.perform(get("/api/v1/shares")
+                        .header("Authorization", "Bearer " + access))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isArray());
 
         mockMvc.perform(get("/api/v1/public/shares/" + token))
                 .andExpect(status().isOk())

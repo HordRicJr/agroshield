@@ -115,7 +115,7 @@ public class AuthService {
 
         UserEntity user = userRepository.findByEmailIgnoreCase(email).orElse(null);
         if (user == null || !passwordHasher.matches(request.password().toCharArray(), user.getPasswordHash())) {
-            loginAttemptService.recordFailure(emailKey, ipKey);
+            boolean locked = loginAttemptService.recordFailure(emailKey, ipKey);
             UUID orgId = null;
             UUID userId = null;
             if (user != null) {
@@ -135,10 +135,14 @@ public class AuthService {
                     emailKey,
                     ipKey,
                     "{\"reason\":\"invalid_credentials\"}");
+            if (locked) {
+                throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
+                        "Trop de tentatives — réessayez plus tard");
+            }
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Identifiants invalides");
         }
         if (!"ACTIVE".equals(user.getStatus())) {
-            loginAttemptService.recordFailure(emailKey, ipKey);
+            boolean locked = loginAttemptService.recordFailure(emailKey, ipKey);
             auditService.recordAnonymous(
                     null,
                     user.getId(),
@@ -149,6 +153,10 @@ public class AuthService {
                     emailKey,
                     ipKey,
                     "{\"reason\":\"inactive\"}");
+            if (locked) {
+                throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
+                        "Trop de tentatives — réessayez plus tard");
+            }
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Compte inactif");
         }
 

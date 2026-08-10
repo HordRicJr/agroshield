@@ -17,10 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 import com.agroshield.application.auth.LoginAttemptService;
 import com.agroshield.infrastructure.config.AgroShieldProperties;
 
-/**
- * Rate-limit Redis avec fallback mémoire immédiat si Redis timeout / indispo
- * (évite un login qui « ne répond pas »).
- */
 @Service
 @Primary
 @ConditionalOnBean(StringRedisTemplate.class)
@@ -51,9 +47,10 @@ public class RedisLoginAttemptService implements LoginAttemptService {
     }
 
     @Override
-    public void recordFailure(String accountKey, String ipKey) {
-        bump(ACCT_PREFIX + accountKey);
-        bump(IP_PREFIX + ipKey);
+    public boolean recordFailure(String accountKey, String ipKey) {
+        int acct = bump(ACCT_PREFIX + accountKey);
+        int ip = bump(IP_PREFIX + ipKey);
+        return acct >= maxAccount || ip >= maxIp;
     }
 
     @Override
@@ -93,17 +90,19 @@ public class RedisLoginAttemptService implements LoginAttemptService {
         }
     }
 
-    private void bump(String key) {
+    private int bump(String key) {
         try {
             Long count = redis.opsForValue().increment(key);
             if (count != null && count == 1L) {
                 redis.expire(key, window);
             }
-            return;
+            if (count != null) {
+                return count.intValue();
+            }
         } catch (Exception ex) {
             log.warn("login_rate_limit redis_bump_fallback reason={}", ex.getClass().getSimpleName());
         }
-        localBump(key);
+        return localBump(key);
     }
 
     private Integer localCount(String key) {
@@ -118,15 +117,16 @@ public class RedisLoginAttemptService implements LoginAttemptService {
         return w.count.get();
     }
 
-    private void localBump(String key) {
+    private int localBump(String key) {
         long expires = System.currentTimeMillis() + window.toMillis();
-        localFallback.compute(key, (k, existing) -> {
+        Window updated = localFallback.compute(key, (k, existing) -> {
             if (existing == null || existing.expired()) {
                 return new Window(new AtomicInteger(1), expires);
             }
             existing.count.incrementAndGet();
             return existing;
         });
+        return updated.count.get();
     }
 
     private static final class Window {

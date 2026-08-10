@@ -18,6 +18,8 @@ import com.agroshield.application.security.SecurityContextHelper;
 import com.agroshield.application.share.dto.ShareDtos.CreateShareRequest;
 import com.agroshield.application.share.dto.ShareDtos.CreateShareResponse;
 import com.agroshield.application.share.dto.ShareDtos.PublicShareView;
+import com.agroshield.application.share.dto.ShareDtos.RevokeShareResponse;
+import com.agroshield.application.share.dto.ShareDtos.ShareSummaryView;
 import com.agroshield.domain.security.ContentHasher;
 import com.agroshield.infrastructure.persistence.entity.DataShareEntity;
 import com.agroshield.infrastructure.persistence.entity.FileMetadataEntity;
@@ -81,9 +83,27 @@ public class DataShareService {
         return new CreateShareResponse(
                 entity.getId(),
                 token,
+                "/api/v1/public/shares/" + token,
                 entity.getExpiresAt(),
                 columns,
-                "Accès métadonnées + colonnes autorisées uniquement — pas de téléchargement du fichier complet.");
+                "Acces metadonnees + colonnes autorisees uniquement — pas de telechargement du fichier complet.");
+    }
+
+    @Transactional(readOnly = true)
+    public List<ShareSummaryView> list() {
+        AuthUserPrincipal principal = SecurityContextHelper.requirePrincipal();
+        return shareRepository
+                .findTop50ByOrganizationIdOrderByCreatedAtDesc(principal.getOrganizationId())
+                .stream()
+                .map(s -> new ShareSummaryView(
+                        s.getId(),
+                        s.getFileId(),
+                        s.getLabel(),
+                        fromJson(s.getAllowedColumns()),
+                        s.getExpiresAt(),
+                        s.getRevokedAt(),
+                        s.getCreatedAt()))
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -91,11 +111,12 @@ public class DataShareService {
         if (rawToken == null || rawToken.isBlank()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Partage introuvable");
         }
-        String hash = contentHasher.sha256Hex(rawToken.trim());
+        String decoded = java.net.URLDecoder.decode(rawToken.trim(), java.nio.charset.StandardCharsets.UTF_8);
+        String hash = contentHasher.sha256Hex(decoded);
         DataShareEntity share = shareRepository.findByTokenHashAndRevokedAtIsNull(hash)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Partage introuvable"));
         if (share.getExpiresAt().isBefore(Instant.now())) {
-            throw new ResponseStatusException(HttpStatus.GONE, "Partage expiré");
+            throw new ResponseStatusException(HttpStatus.GONE, "Partage expire");
         }
         FileMetadataEntity file = fileRepository.findById(share.getFileId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Fichier introuvable"));
@@ -111,7 +132,7 @@ public class DataShareService {
     }
 
     @Transactional
-    public ShareDtos.RevokeShareResponse revoke(UUID shareId) {
+    public RevokeShareResponse revoke(UUID shareId) {
         AuthUserPrincipal principal = SecurityContextHelper.requirePrincipal();
         DataShareEntity share = shareRepository.findByIdAndOrganizationId(shareId, principal.getOrganizationId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Partage introuvable"));
@@ -119,7 +140,7 @@ public class DataShareService {
         shareRepository.save(share);
         auditService.record(principal, "DATA_SHARE_REVOKE", "data_share", shareId.toString(),
                 "SUCCESS", null, null, null);
-        return new ShareDtos.RevokeShareResponse(shareId, true);
+        return new RevokeShareResponse(shareId, true);
     }
 
     private String generateToken() {

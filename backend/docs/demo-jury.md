@@ -30,9 +30,20 @@ Swagger : http://127.0.0.1:8080/swagger-ui.html
 - Montrer `sha256Hex` + métadonnées (pas le contenu en clair dans les logs)
 
 ### 4. Partage sélectif (point fort checklist)
-- `POST /api/v1/shares` avec `allowedColumns: ["parcelle","superficie"]` (pas l’IBAN)
-- Ouvrir sans JWT : `GET /api/v1/public/shares/{token}`
-- Insister : **`accessMode: METADATA_ONLY`** — le partenaire voit les colonnes autorisées, **pas le fichier complet**
+- `POST /api/v1/shares` body (camelCase **ou** snake_case) :
+  ```json
+  {
+    "fileId": "<uuid-fichier>",
+    "label": "Partenaire coop",
+    "allowedColumns": ["parcelle", "superficie"],
+    "ttlMinutes": 60
+  }
+  ```
+  Équivalent accepté : `file_id`, `allowed_columns`, `ttl_minutes`
+- Réponse : `token` + `publicPath` (ex. `/api/v1/public/shares/{token}`)
+- Ouvrir **sans JWT** : `GET {publicPath}`
+- Insister : **`accessMode: METADATA_ONLY`** — colonnes autorisées, **pas le fichier complet**
+- `GET /api/v1/shares` → liste des partages org
 - `DELETE /api/v1/shares/{id}` → révocation → le lien public tombe
 
 ### 5. Fraud Guard + décision Spring

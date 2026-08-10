@@ -1,5 +1,6 @@
 package com.agroshield.infrastructure.persistence.repo;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,4 +13,6 @@ public interface DataShareRepository extends JpaRepository<DataShareEntity, UUID
     Optional<DataShareEntity> findByTokenHashAndRevokedAtIsNull(String tokenHash);
 
     Optional<DataShareEntity> findByIdAndOrganizationId(UUID id, UUID organizationId);
+
+    List<DataShareEntity> findTop50ByOrganizationIdOrderByCreatedAtDesc(UUID organizationId);
 }

@@ -51,7 +51,7 @@ POST /api/v1/alerts/{id}/acknowledge
 POST/GET/PUT/DELETE /api/v1/producers
 POST/GET/PUT/DELETE /api/v1/farms
 POST/GET/DELETE     /api/v1/files   (+ GET /{id}/content)
-POST/DELETE         /api/v1/shares
+POST/GET/DELETE     /api/v1/shares
 GET                 /api/v1/public/shares/{token}   # métadonnées + colonnes — pas le fichier
 ```
 

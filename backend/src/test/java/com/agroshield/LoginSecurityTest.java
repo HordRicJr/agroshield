@@ -48,7 +48,7 @@ class LoginSecurityTest {
                 {"email":"%s","password":"WrongPassword!999"}
                 """.formatted(email);
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             mockMvc.perform(post("/api/v1/auth/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(badLogin))
