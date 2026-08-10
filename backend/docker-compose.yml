@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: agroshield
+      POSTGRES_USER: agroshield
+      POSTGRES_PASSWORD: agroshield
+    ports:
+      - "5433:5432"
+    volumes:
+      - agroshield_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agroshield -d agroshield"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # backend: démarré hors compose en Phase 1 (java -jar / IDE)
+  # AI Service: process local sur :8000 (hors compose)
+
+volumes:
+  agroshield_pg:

@@ -1,0 +1,52 @@
+# ==========================================================================
+# AgroShield — .gitignore racine
+# Les sous-projets (backend/, ai-service/) ont leurs propres .gitignore ;
+# celui-ci couvre uniquement la racine et l'outillage qui ne fait pas
+# partie du code du projet.
+# ==========================================================================
+
+# --- Outillage / framework BMAD Method (agents, skills, config personnelle) ---
+# Pas du code AgroShield : généré/synchronisé par l'outillage, propre à
+# l'environnement de développement, pas au produit livré.
+_bmad/
+_bmad-output/
+.agent/
+.agents/
+.claude/
+.github/agents/
+
+# --- Outils locaux (binaires téléchargés, ex. Maven embarqué) ---
+.tools/
+
+# --- Secrets / environnements locaux ---
+.env
+.env.local
+!.env.example
+!**/.env.example
+
+# --- Modèles IA, caches, environnements virtuels Python ---
+# (déjà couverts dans ai-service/.gitignore, rappel explicite au cas où)
+**/.venv/
+**/venv/
+**/.cache/
+**/__pycache__/
+*.pyc
+**/.pytest_cache/
+**/data/models/*
+!**/data/models/.gitkeep
+*.joblib
+*.onnx
+*.bin
+*.safetensors
+
+# --- Build / dépendances ---
+**/target/
+**/node_modules/
+*.class
+
+# --- IDE / OS ---
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

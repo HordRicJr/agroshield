@@ -1,0 +1,40 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://127.0.0.1:5433/agroshield}
+    username: ${DATABASE_USERNAME:agroshield}
+    password: ${DATABASE_PASSWORD:agroshield}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  data:
+    redis:
+      url: ${REDIS_URL:redis://127.0.0.1:6379}
+      timeout: 500ms
+      connect-timeout: 500ms
+      repositories:
+        enabled: false
+
+logging:
+  level:
+    com.agroshield: DEBUG
+    org.flywaydb: INFO

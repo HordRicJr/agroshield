@@ -1,0 +1,44 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5433/agroshield
+    username: agroshield
+    password: agroshield
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
+agroshield:
+  security:
+    jwt-secret: test-jwt-secret-at-least-32-characters-long
+  ai:
+    base-url: http://127.0.0.1:9
+    internal-token: test-token
+    connect-timeout: 1s
+    read-timeout: 1s
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+  storage:
+    base-path: ./target/test-files
+    max-file-bytes: 1048576
+  auth-rate-limit:
+    max-attempts: 5
+    max-attempts-per-ip: 30
+    window-seconds: 900
+
+management:
+  health:
+    redis:
+      enabled: false

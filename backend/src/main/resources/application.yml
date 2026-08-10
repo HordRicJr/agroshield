@@ -1,0 +1,104 @@
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+
+spring:
+  application:
+    name: agroshield-backend
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 12MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+  info:
+    env:
+      enabled: true
+  health:
+    redis:
+      enabled: true
+    db:
+      enabled: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+
+agroshield:
+  security:
+    jwt-secret: ${JWT_SECRET:CHANGE_ME_DEV_ONLY_32CHARS_MINIMUM_OK}
+    jwt-issuer: ${JWT_ISSUER:agroshield}
+    jwt-audience: ${JWT_AUDIENCE:agroshield-api}
+    access-token-ttl-seconds: ${JWT_ACCESS_TTL_SECONDS:900}
+    refresh-token-ttl-seconds: ${JWT_REFRESH_TTL_SECONDS:604800}
+    argon2:
+      memory-kb: ${ARGON2_MEMORY_KB:19456}
+      iterations: ${ARGON2_ITERATIONS:2}
+      parallelism: ${ARGON2_PARALLELISM:1}
+      salt-length: 16
+      hash-length: 32
+  ai:
+    base-url: ${AI_SERVICE_URL:http://127.0.0.1:8000}
+    internal-token: ${AI_INTERNAL_TOKEN:agroshield-jury-token}
+    connect-timeout: ${AI_CONNECT_TIMEOUT:2s}
+    read-timeout: ${AI_READ_TIMEOUT:30s}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://127.0.0.1:3000}
+  storage:
+    base-path: ${STORAGE_PATH:./data/files}
+    max-file-bytes: ${STORAGE_MAX_BYTES:10485760}
+  auth-rate-limit:
+    max-attempts: ${AUTH_MAX_ATTEMPTS:5}
+    max-attempts-per-ip: ${AUTH_MAX_ATTEMPTS_PER_IP:30}
+    window-seconds: ${AUTH_LOCK_WINDOW_SECONDS:900}
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      aiService:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 20s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        recordExceptions:
+          - com.agroshield.infrastructure.ai.AiServiceException
+          - org.springframework.web.client.RestClientException
+  retry:
+    instances:
+      aiService:
+        maxAttempts: 2
+        waitDuration: 250ms
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - com.agroshield.infrastructure.ai.AiUnavailableException
+  timelimiter:
+    instances:
+      aiService:
+        timeoutDuration: 35s
+
+logging:
+  pattern:
+    level: "%5p [corr=%X{correlationId}]"
+  level:
+    root: INFO
+    com.agroshield: INFO
+    org.springframework.security: WARN
