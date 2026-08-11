@@ -15,4 +15,6 @@ public interface ProducerRepository extends JpaRepository<ProducerEntity, UUID> 
     Optional<ProducerEntity> findByIdAndOrganizationId(UUID id, UUID organizationId);
 
     boolean existsByOrganizationIdAndCodeIgnoreCase(UUID organizationId, String code);
+
+    long countByOrganizationId(UUID organizationId);
 }

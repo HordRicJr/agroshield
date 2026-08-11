@@ -1,0 +1,24 @@
+INFO:     Started server process [27464]
+INFO:     Waiting for application startup.
+2026-08-11 10:21:52,457 INFO [app.main] startup version=0.4.0 phase=2
+2026-08-11 10:21:52,463 INFO [app.models.loader] model_loader action=start model_id=MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli device=cpu hf_home=D:\Agro\ai-service\.cache\huggingface
+D:\Agro\ai-service\.venv\Lib\site-packages\transformers\utils\hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Device set to use cpu
+2026-08-11 10:22:58,381 INFO [app.models.loader] model_loader action=ready model_id=MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli load_s=65.78 warmup_s=0.14 total_s=65.92
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:53341 - "GET /health/ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53342 - "GET /health/ready HTTP/1.1" 200 OK
+2026-08-11 10:25:02,003 INFO [app.routers.classify] classify_data columns=['email', 'montant_paiement', 'region'] duration_ms=0.2 stub=true
+INFO:     127.0.0.1:51560 - "POST /ai/classify-data HTTP/1.1" 200 OK
+2026-08-11 10:25:02,586 INFO [app.models.inference] zero_shot_infer text_len=136 n_labels=6 multi_label=True
+2026-08-11 10:25:02,758 INFO [app.services.fraud.model] fraud_model_predict n_categories=6 top=phishing
+2026-08-11 10:25:02,758 INFO [app.services.fraud.service] fraud_analyze channel=SMS content_len=136 score=79 risk=CRITICAL n_signals=4 inference_ms=172.1 stub=false
+2026-08-11 10:25:02,758 INFO [app.routers.fraud] analyze_message channel=SMS content_len=136 score=79 risk=CRITICAL duration_ms=172.4 stub=False
+INFO:     127.0.0.1:51560 - "POST /ai/analyze-message HTTP/1.1" 200 OK
+2026-08-11 10:25:03,082 INFO [app.models.inference] zero_shot_infer text_len=63 n_labels=6 multi_label=True
+2026-08-11 10:25:03,221 INFO [app.services.fraud.model] fraud_model_predict n_categories=6 top=demande suspecte
+2026-08-11 10:25:03,221 INFO [app.services.fraud.service] fraud_analyze channel=SMS content_len=63 score=41 risk=MEDIUM n_signals=0 inference_ms=139.4 stub=false
+2026-08-11 10:25:03,221 INFO [app.routers.fraud] analyze_message channel=SMS content_len=63 score=41 risk=MEDIUM duration_ms=139.6 stub=False
+INFO:     127.0.0.1:51560 - "POST /ai/analyze-message HTTP/1.1" 200 OK

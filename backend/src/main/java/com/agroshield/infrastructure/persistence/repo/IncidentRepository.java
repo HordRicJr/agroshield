@@ -16,4 +16,10 @@ public interface IncidentRepository extends JpaRepository<IncidentEntity, UUID> 
 
     long countByOrganizationIdAndStatusAndDetectedAtAfter(
             UUID organizationId, String status, Instant detectedAt);
+
+    long countByOrganizationIdAndDetectedAtAfter(UUID organizationId, Instant detectedAt);
+
+    long countByOrganizationIdAndStatus(UUID organizationId, String status);
+
+    long countByOrganizationIdAndStatusAndSeverity(UUID organizationId, String status, String severity);
 }

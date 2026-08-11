@@ -15,4 +15,6 @@ public interface FarmRepository extends JpaRepository<FarmEntity, UUID> {
     Optional<FarmEntity> findByIdAndOrganizationId(UUID id, UUID organizationId);
 
     List<FarmEntity> findByOrganizationIdAndProducerId(UUID organizationId, UUID producerId);
+
+    long countByOrganizationId(UUID organizationId);
 }

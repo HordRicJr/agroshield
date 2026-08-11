@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agroshield.application.files.FileAnalyzeService;
 import com.agroshield.application.files.FileStorageService;
+import com.agroshield.application.files.dto.AnalyzeFileResult;
 import com.agroshield.application.files.dto.FileMetadataView;
 import com.agroshield.infrastructure.persistence.entity.FileMetadataEntity;
 import com.agroshield.infrastructure.security.CorrelationIdFilter;
@@ -31,9 +33,11 @@ import com.agroshield.interfaces.rest.dto.ApiResponse;
 public class FileController {
 
     private final FileStorageService fileStorageService;
+    private final FileAnalyzeService fileAnalyzeService;
 
-    public FileController(FileStorageService fileStorageService) {
+    public FileController(FileStorageService fileStorageService, FileAnalyzeService fileAnalyzeService) {
         this.fileStorageService = fileStorageService;
+        this.fileAnalyzeService = fileAnalyzeService;
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -53,6 +57,12 @@ public class FileController {
     @PreAuthorize("hasAuthority('DATA_READ')")
     public ApiResponse<FileMetadataView> get(@PathVariable UUID id) {
         return ApiResponse.ok(fileStorageService.get(id), corr());
+    }
+
+    @PostMapping("/{id}/analyze")
+    @PreAuthorize("hasAuthority('DATA_WRITE')")
+    public ApiResponse<AnalyzeFileResult> analyze(@PathVariable UUID id) {
+        return ApiResponse.ok(fileAnalyzeService.analyze(id), corr());
     }
 
     @GetMapping("/{id}/content")

@@ -99,6 +99,6 @@ class ClassifyAndFraudFlowTest {
                         .content("""
                                 {"content":"hello","channel":"EMAIL","language":"fr"}
                                 """))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 }

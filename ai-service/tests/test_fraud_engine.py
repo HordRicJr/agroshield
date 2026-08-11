@@ -68,3 +68,19 @@ def test_risk_engine_low_when_legit():
     result = compute_risk(cats, [])
     assert result.score <= 24
     assert result.risk_level.value == "LOW"
+
+
+def test_risk_engine_low_without_signals_even_if_model_is_noisy():
+    """Régression : un message bénin (« Bonjour », un lien légitime...) sans
+    aucun signal de règle ne doit jamais dépasser LOW, même si le zero-shot
+    (bruyant sur les textes courts) donne un score de suspicion élevé et un
+    score « légitime » faible — les règles décident, l'IA n'invente pas un
+    risque à elle seule."""
+    cats = [
+        ModelCategory(label="demande suspecte", score=0.94),
+        ModelCategory(label="phishing", score=0.83),
+        ModelCategory(label="demande légitime", score=0.18),
+    ]
+    result = compute_risk(cats, [])
+    assert result.score <= 24
+    assert result.risk_level.value == "LOW"

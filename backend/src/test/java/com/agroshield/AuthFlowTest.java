@@ -62,7 +62,7 @@ class AuthFlowTest {
                 .andExpect(jsonPath("$.data.email").value(email));
 
         mockMvc.perform(get("/api/v1/system/schema-status"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
 
         mockMvc.perform(get("/api/v1/system/schema-status")
                         .header("Authorization", "Bearer " + access))

@@ -73,6 +73,10 @@ public class OrganizationMemberEntity {
         return status;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public Instant getJoinedAt() {
         return joinedAt;
     }

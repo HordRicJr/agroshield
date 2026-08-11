@@ -2,13 +2,17 @@ package com.agroshield.interfaces.rest;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.agroshield.infrastructure.ai.AiServiceException;
@@ -18,6 +22,8 @@ import com.agroshield.interfaces.rest.dto.ApiResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ApiResponse<Void>> handleStatus(ResponseStatusException ex) {
@@ -67,8 +73,25 @@ public class GlobalExceptionHandler {
                 requestId()));
     }
 
+    /** Corps de requête illisible (JSON malformé, encodage invalide) — jamais une 500. */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUnreadableBody(HttpMessageNotReadableException ex) {
+        return ResponseEntity.badRequest().body(ApiResponse.fail(
+                new ApiError("MALFORMED_REQUEST", "Requête illisible (JSON ou encodage invalide).", Map.of()),
+                requestId()));
+    }
+
+    /** Partie multipart requise absente (ex : fichier non joint) — jamais une 500. */
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMissingPart(MissingServletRequestPartException ex) {
+        return ResponseEntity.badRequest().body(ApiResponse.fail(
+                new ApiError("MISSING_PART", "Partie manquante : " + ex.getRequestPartName(), Map.of()),
+                requestId()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneric(Exception ex) {
+        log.error("unhandled_exception requestId={}", requestId(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(
                 new ApiError("INTERNAL_ERROR", "Erreur interne.", Map.of()),
                 requestId()));

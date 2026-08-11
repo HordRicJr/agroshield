@@ -7,6 +7,7 @@ import com.agroshield.infrastructure.ai.dto.ClassifyResponse;
 import com.agroshield.infrastructure.ai.dto.DetectAnomalyRequest;
 import com.agroshield.infrastructure.ai.dto.DetectAnomalyResponse;
 import com.agroshield.infrastructure.ai.dto.HealthResponse;
+import com.agroshield.infrastructure.ai.dto.OcrResponse;
 import com.agroshield.infrastructure.ai.dto.ReadyResponse;
 import com.agroshield.infrastructure.ai.dto.TrainAnomalyRequest;
 import com.agroshield.infrastructure.ai.dto.TrainAnomalyResponse;
@@ -28,4 +29,6 @@ public interface AiServicePort {
     DetectAnomalyResponse detectAnomaly(DetectAnomalyRequest request);
 
     TrainAnomalyResponse trainAnomaly(TrainAnomalyRequest request);
+
+    OcrResponse ocrImage(byte[] imageBytes, String filename, String contentType);
 }

@@ -56,4 +56,25 @@ class PlatformRiskEngineTest {
         assertThat(d.riskLevel()).isEqualTo(RiskLevel.CRITICAL);
         assertThat(d.recommendedAction()).isEqualTo(RecommendedAction.BLOCK_RECOMMENDED);
     }
+
+    @Test
+    void noConcreteSignalStaysLowDespiteChannelAndIncidentContext() {
+        // Message bénin (« Bonjour », un lien légitime...) : l'IA n'a détecté
+        // aucun signal de règle et conclut LOW. Le contexte (SMS + incidents
+        // récents) ne doit pas, à lui seul, faire basculer en MEDIUM+.
+        AnalyzeMessageResponse ai = new AnalyzeMessageResponse(
+                RiskLevel.LOW,
+                20,
+                List.of(),
+                List.of(new ModelCategory("demande suspecte", 0.9)),
+                "risque estimé faible",
+                0.5,
+                false);
+
+        PlatformRiskDecision d = engine.evaluate(ai, Channel.SMS, false, 3);
+
+        assertThat(d.score()).isLessThanOrEqualTo(24);
+        assertThat(d.riskLevel()).isEqualTo(RiskLevel.LOW);
+        assertThat(d.recommendedAction()).isEqualTo(RecommendedAction.MONITOR);
+    }
 }

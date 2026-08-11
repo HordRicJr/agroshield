@@ -11,7 +11,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app import __version__
 from app.models.loader import load_models
-from app.routers import anomaly, classify, fraud, health
+from app.routers import anomaly, classify, fraud, health, ocr
 
 logging.basicConfig(
     level=logging.INFO,
@@ -103,3 +103,4 @@ app.include_router(health.router)
 app.include_router(classify.router)
 app.include_router(fraud.router)
 app.include_router(anomaly.router)
+app.include_router(ocr.router)

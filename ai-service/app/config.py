@@ -36,6 +36,17 @@ class Settings(BaseSettings):
     # True en tests unitaires : pas de téléchargement HF au lifespan.
     skip_model_load: bool = Field(default=False, alias="SKIP_MODEL_LOAD")
 
+    tesseract_cmd: str = Field(
+        default=r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+        alias="TESSERACT_CMD",
+        description="Chemin vers l'exécutable tesseract (OCR capture d'écran).",
+    )
+    tessdata_dir: Path = Field(
+        default=Path("./tessdata"),
+        alias="TESSDATA_DIR",
+        description="Dossier des packs de langue tesseract (fra + eng).",
+    )
+
     def resolved_model_id(self) -> str:
         return self.fraud_model_id or self.hf_model_id
 

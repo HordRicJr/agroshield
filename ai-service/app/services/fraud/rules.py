@@ -161,16 +161,12 @@ def apply_fraud_rules(text: str) -> list[Signal]:
             )
         )
 
-    # 7–9 Liens / URL suspectes
+    # 7–9 Liens / URL suspectes — un lien seul n'est pas un signal ; seuls les
+    # marqueurs de risque réels (raccourcisseur, IP nue, extension à risque)
+    # comptent. Un lien légitime (site connu, domaine de la coopérative...)
+    # ne doit jamais être signalé.
     urls = _URL_RE.findall(text)
     if urls:
-        hits.append(
-            RuleHit(
-                SignalType.SUSPICIOUS_URL,
-                10,
-                "Un ou plusieurs liens externes sont présents dans le message.",
-            )
-        )
         for raw in urls:
             url = raw if "://" in raw else f"http://{raw}"
             try:

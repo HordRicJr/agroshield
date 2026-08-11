@@ -76,6 +76,16 @@ public class PlatformRiskEngine {
         }
 
         int platformScore = Math.min(100, aiScore + adjustment);
+
+        // Sans aucun signal de règle détecté et IA elle-même en LOW, le contexte
+        // (canal, mode dégradé, incidents récents) ne doit pas à lui seul faire
+        // basculer en MEDIUM+ : il amplifie un risque déjà réel, il n'en invente
+        // pas un à partir de rien (même principe que le Risk Engine du service IA).
+        boolean noConcreteSignal = ai.signals() == null || ai.signals().isEmpty();
+        if (noConcreteSignal && ai.riskLevel() == RiskLevel.LOW) {
+            platformScore = Math.min(platformScore, 24);
+        }
+
         RiskLevel level = levelFromScore(platformScore);
         RecommendedAction action = actionFromLevel(level);
 

@@ -110,13 +110,15 @@ public class FileStorageService {
         return toView(requireOwned(id));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Resource loadContent(UUID id) {
+        AuthUserPrincipal principal = SecurityContextHelper.requirePrincipal();
         FileMetadataEntity meta = requireOwned(id);
         Path path = Path.of(meta.getStoragePath());
         if (!Files.isRegularFile(path)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Contenu fichier introuvable");
         }
+        auditService.record(principal, "FILE_DOWNLOAD", "file", id.toString(), "SUCCESS", null, null, null);
         return new FileSystemResource(path);
     }
 

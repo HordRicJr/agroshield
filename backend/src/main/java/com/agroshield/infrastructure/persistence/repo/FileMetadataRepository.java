@@ -13,4 +13,6 @@ public interface FileMetadataRepository extends JpaRepository<FileMetadataEntity
     List<FileMetadataEntity> findByOrganizationIdOrderByCreatedAtDesc(UUID organizationId);
 
     Optional<FileMetadataEntity> findByIdAndOrganizationId(UUID id, UUID organizationId);
+
+    long countByOrganizationId(UUID organizationId);
 }

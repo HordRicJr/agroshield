@@ -1,0 +1,65 @@
+INFO:     Started server process [25228]
+INFO:     Waiting for application startup.
+2026-08-11 11:17:17,764 INFO [app.main] startup version=0.4.0 phase=2
+2026-08-11 11:17:17,770 INFO [app.models.loader] model_loader action=start model_id=MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli device=cpu hf_home=D:\Agro\ai-service\.cache\huggingface
+D:\Agro\ai-service\.venv\Lib\site-packages\transformers\utils\hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Device set to use cpu
+2026-08-11 11:17:39,611 INFO [app.models.loader] model_loader action=ready model_id=MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli load_s=21.58 warmup_s=0.27 total_s=21.84
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:51550 - "GET /health/ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51555 - "GET /health/ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61585 - "GET /health/ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61587 - "GET /health/ready HTTP/1.1" 200 OK
+2026-08-11 11:18:38,095 INFO [app.routers.classify] classify_data columns=['Code producteur', 'Nom', 'Region', 'Montant paiement (FCFA)'] duration_ms=0.7 stub=true
+INFO:     127.0.0.1:52433 - "POST /ai/classify-data HTTP/1.1" 200 OK
+2026-08-11 11:24:01,801 INFO [app.routers.classify] classify_data columns=['Code producteur', 'Nom', 'Region', 'Montant paiement (FCFA)'] duration_ms=0.1 stub=true
+INFO:     127.0.0.1:49709 - "POST /ai/classify-data HTTP/1.1" 200 OK
+2026-08-11 11:24:01,939 INFO [app.models.inference] zero_shot_infer text_len=136 n_labels=6 multi_label=True
+2026-08-11 11:24:02,093 INFO [app.services.fraud.model] fraud_model_predict n_categories=6 top=phishing
+2026-08-11 11:24:02,094 INFO [app.services.fraud.service] fraud_analyze channel=SMS content_len=136 score=79 risk=CRITICAL n_signals=4 inference_ms=154.9 stub=false
+2026-08-11 11:24:02,094 INFO [app.routers.fraud] analyze_message channel=SMS content_len=136 score=79 risk=CRITICAL duration_ms=155.0 stub=False
+INFO:     127.0.0.1:49709 - "POST /ai/analyze-message HTTP/1.1" 200 OK
+2026-08-11 11:26:40,721 INFO [app.routers.classify] classify_data columns=['Horodateur', 'Avant de commencer, dites-nous qui vous êtes. \nChoisissez ce qui décrit le mieux votre activité principale :', 'Faites-vous aussi autre chose ? (facultatif, plusieurs réponses possibles)', '1. Décrivez-moi votre dernière vente : quelle quantité, à qui, à quel prix ?', "2. Comment cet acheteur vous a-t-il trouvé — ou comment l'avez-vous trouvé ?", "3. Combien d'acheteurs différents avez-vous eus cette année ?", '4. Qui fixe le prix de votre marchandise, et comment se passe la discussion ?', "5. Entre la livraison et le paiement complet, combien de temps s'écoule ?", "6. Qu'est-ce qui s'est le plus mal passé pour vous cette année dans votre activité ?", "7. Vous est-il arrivé de perdre de la marchandise faute d'acheteur ? Racontez.", "8. Comment se passe le transport aujourd'hui : qui l'organise, qui le paie ?", '9. Que faites-vous quand un acheteur inconnu vous appelle ? Racontez la dernière fois.', "10. Qu'avez-vous essayé pour vendre mieux ou plus cher, et qu'est-ce que ça a donné ?", "11. Est-ce votre téléphone personnel, ou le partagez-vous avec quelqu'un ?", "12. Comment vous connectez-vous à internet : forfait data, wifi, chez quelqu'un ?", '13. Combien de jours dans la semaine avez-vous du crédit internet ?', '14. Quelle application ouvrez-vous le plus souvent, et combien de fois par jour ?', '15. Avez-vous déjà fait un paiement Mobile Money vous-même, sans aide ? Racontez la dernière fois.', '16. Quand une application vous demande de créer un compte avec un mot de passe, que faites-vous ?', '17. Quand quelque chose ne marche pas sur votre téléphone, qui vous aide ?', "18. Y a-t-il quelque chose que vous aimeriez faire sur votre téléphone mais que vous n'arrivez pas à faire ?", '19. Utilisez-vous votre téléphone pour votre activité, ou seulement pour appeler la famille ? Exemple précis.', "20. Avez-vous déjà conclu une vente entièrement par téléphone, sans rencontrer l'acheteur ? Comment vous êtes-vous fait payer ?", "1. Racontez-moi votre dernière commande, du premier contact jusqu'au paiement.", '2. Comment ce client vous a-t-il trouvé ? Et les trois précédents ?', "3. Sur 10 personnes qui vous contactent, combien achètent ? Où ça s'arrête ?", "4. Comment notez-vous vos commandes et vos stocks aujourd'hui ? Montrez-moi.", '5. Qui prend vos photos de produits, et comment les envoyez-vous ?', "6. Avez-vous déjà vendu à quelqu'un hors du Togo ? Racontez comment ça s'est passé.", '7. Où achetez-vous votre matière première, et comment ça se passe ?', "8. Qu'avez-vous déjà essayé pour vendre en ligne, et pourquoi vous avez arrêté ou continué ?", '9. Combien avez-vous dépensé le mois dernier pour attirer des clients ?', '10. Quel est le moment le plus frustrant de votre semaine de travail ?', "11. Est-ce votre téléphone personnel, ou le partagez-vous avec quelqu'un ?  2", "12. Comment vous connectez-vous à internet : forfait data, wifi, chez quelqu'un ?", '13. Combien de jours dans la semaine avez-vous du crédit internet ?', '14. Quelle application ouvrez-vous le plus souvent, et combien de fois par jour ?', '15. Quelle est la dernière application que vous avez installée vous-même ? Quand ?', "16. Montrez-moi comment vous envoyez une photo à quelqu'un sur WhatsApp.", '17. Avez-vous déjà fait un paiement Mobile Money vous-même, sans aide ? Racontez la dernière fois.', '18. Quand une application vous demande de créer un compte avec un mot de passe, que faites-vous ?', '19. Quand quelque chose ne marche pas sur votre téléphone, qui vous aide ?', "20. Y a-t-il quelque chose que vous aimeriez faire sur votre téléphone mais que vous n'arrivez pas à faire ?", '21. Combien de temps mettez-vous à répondre à un message client, et pourquoi parfois plus longtemps ?', '22. decrivez-moi comment vous présentez un produit à un client sur WhatsApp — photo, prix, description.', '1. Quel est le dernier produit africain que vous avez acheté ? Racontez tout.', "2. Comment l'avez-vous trouvé, étape par étape ?", "3. Vous l'avez acheté pour vous, pour offrir, ou pour revendre ?", '4. Combien de fois avez-vous acheté ce type de produit cette année, et pour quel montant à chaque fois ?', "5. Racontez-moi une fois où un achat s'est mal passé.", "6. La dernière fois que vous avez hésité puis renoncé, qu'est-ce qui vous a arrêté ?", '7. Avant de payer un vendeur que vous ne connaissez pas, que faites-vous pour vous rassurer ?', "8. Comment avez-vous payé, et pourquoi ce moyen-là plutôt qu'un autre ?", '9. Comment le produit vous est-il parvenu, et combien de temps ça a pris ?', "10. Vous est-il déjà arrivé de chercher un produit précis sans jamais le trouver ? Qu'avez-vous fait à la place ?", '11. Montrez-moi le téléphone que vous utilisez tous les jours.', "12. Est-ce votre téléphone personnel, ou le partagez-vous avec quelqu'un ?", "13. Comment vous connectez-vous à internet : forfait data, wifi, chez quelqu'un ? Combien par semaine ?", '14. Combien de jours dans la semaine avez-vous du crédit internet ?', '15. Ouvrez votre téléphone et montrez-moi les applications que vous avez ouvertes hier.', '16. Quelle application ouvrez-vous le plus souvent, et combien de fois par jour ?', '17. Quelle est la dernière application que vous avez installée vous-même ? Quand ?', "18. Montrez-moi comment vous envoyez une photo à quelqu'un sur WhatsApp.", '19. Avez-vous déjà fait un paiement Mobile Money vous-même, sans aide ? Racontez la dernière fois.', '20. Quand une application vous demande de créer un compte avec un mot de passe, que faites-vous ?', '21. Quand quelque chose ne marche pas sur votre téléphone, qui vous aide ?', "22. Y a-t-il quelque chose que vous aimeriez faire sur votre téléphone mais que vous n'arrivez pas à faire ?", '23. Avez-vous déjà acheté quelque chose en ligne et payé avant de recevoir ? Racontez.', "24. Quand vous cherchez un produit, où tapez-vous en premier : Google, Facebook, TikTok, WhatsApp, ou vous demandez à quelqu'un ?"] duration_ms=2.1 stub=true
+INFO:     127.0.0.1:56872 - "POST /ai/classify-data HTTP/1.1" 200 OK
+2026-08-11 11:30:06,167 INFO [app.models.inference] zero_shot_infer text_len=40 n_labels=6 multi_label=True
+2026-08-11 11:30:06,366 INFO [app.services.fraud.model] fraud_model_predict n_categories=6 top=demande suspecte
+2026-08-11 11:30:06,366 INFO [app.services.fraud.service] fraud_analyze channel=SMS content_len=40 score=45 risk=MEDIUM n_signals=1 inference_ms=199.7 stub=false
+2026-08-11 11:30:06,366 INFO [app.routers.fraud] analyze_message channel=SMS content_len=40 score=45 risk=MEDIUM duration_ms=199.8 stub=False
+INFO:     127.0.0.1:65352 - "POST /ai/analyze-message HTTP/1.1" 200 OK
+2026-08-11 11:30:33,528 INFO [app.models.inference] zero_shot_infer text_len=32 n_labels=6 multi_label=True
+2026-08-11 11:30:33,730 INFO [app.services.fraud.model] fraud_model_predict n_categories=6 top=demande suspecte
+2026-08-11 11:30:33,730 INFO [app.services.fraud.service] fraud_analyze channel=SMS content_len=32 score=56 risk=HIGH n_signals=2 inference_ms=202.4 stub=false
+2026-08-11 11:30:33,730 INFO [app.routers.fraud] analyze_message channel=SMS content_len=32 score=56 risk=HIGH duration_ms=202.6 stub=False
+INFO:     127.0.0.1:61556 - "POST /ai/analyze-message HTTP/1.1" 200 OK
+2026-08-11 11:31:18,880 INFO [app.models.inference] zero_shot_infer text_len=356 n_labels=6 multi_label=True
+2026-08-11 11:31:19,179 INFO [app.services.fraud.model] fraud_model_predict n_categories=6 top=demande suspecte
+2026-08-11 11:31:19,179 INFO [app.services.fraud.service] fraud_analyze channel=SMS content_len=356 score=35 risk=MEDIUM n_signals=1 inference_ms=299.8 stub=false
+2026-08-11 11:31:19,179 INFO [app.routers.fraud] analyze_message channel=SMS content_len=360 score=35 risk=MEDIUM duration_ms=301.7 stub=False
+INFO:     127.0.0.1:64193 - "POST /ai/analyze-message HTTP/1.1" 200 OK
+2026-08-11 11:31:31,450 INFO [app.models.inference] zero_shot_infer text_len=356 n_labels=6 multi_label=True
+2026-08-11 11:31:31,733 INFO [app.services.fraud.model] fraud_model_predict n_categories=6 top=demande suspecte
+2026-08-11 11:31:31,734 INFO [app.services.fraud.service] fraud_analyze channel=SMS content_len=356 score=35 risk=MEDIUM n_signals=1 inference_ms=283.8 stub=false
+2026-08-11 11:31:31,734 INFO [app.routers.fraud] analyze_message channel=SMS content_len=360 score=35 risk=MEDIUM duration_ms=284.0 stub=False
+INFO:     127.0.0.1:59206 - "POST /ai/analyze-message HTTP/1.1" 200 OK
+2026-08-11 11:34:07,003 INFO [app.models.inference] zero_shot_infer text_len=99 n_labels=6 multi_label=True
+2026-08-11 11:34:07,205 INFO [app.services.fraud.model] fraud_model_predict n_categories=6 top=demande suspecte
+2026-08-11 11:34:07,205 INFO [app.services.fraud.service] fraud_analyze channel=SMS content_len=99 score=43 risk=MEDIUM n_signals=1 inference_ms=202.0 stub=false
+2026-08-11 11:34:07,205 INFO [app.routers.fraud] analyze_message channel=SMS content_len=99 score=43 risk=MEDIUM duration_ms=202.2 stub=False
+INFO:     127.0.0.1:64431 - "POST /ai/analyze-message HTTP/1.1" 200 OK
+2026-08-11 11:34:07,327 INFO [app.models.inference] zero_shot_infer text_len=67 n_labels=6 multi_label=True
+2026-08-11 11:34:07,473 INFO [app.services.fraud.model] fraud_model_predict n_categories=6 top=demande suspecte
+2026-08-11 11:34:07,473 INFO [app.services.fraud.service] fraud_analyze channel=SMS content_len=67 score=39 risk=MEDIUM n_signals=0 inference_ms=145.7 stub=false
+2026-08-11 11:34:07,473 INFO [app.routers.fraud] analyze_message channel=SMS content_len=67 score=39 risk=MEDIUM duration_ms=145.8 stub=False
+INFO:     127.0.0.1:64431 - "POST /ai/analyze-message HTTP/1.1" 200 OK
+2026-08-11 11:34:52,959 INFO [app.models.inference] zero_shot_infer text_len=162 n_labels=6 multi_label=True
+2026-08-11 11:34:53,037 INFO [app.services.fraud.model] fraud_model_predict n_categories=6 top=demande suspecte
+2026-08-11 11:34:53,037 INFO [app.services.fraud.service] fraud_analyze channel=SMS content_len=162 score=59 risk=HIGH n_signals=4 inference_ms=78.9 stub=false
+2026-08-11 11:34:53,038 INFO [app.routers.fraud] analyze_message channel=SMS content_len=162 score=59 risk=HIGH duration_ms=79.1 stub=False
+INFO:     127.0.0.1:50657 - "POST /ai/analyze-message HTTP/1.1" 200 OK
+2026-08-11 11:35:16,603 INFO [app.models.inference] zero_shot_infer text_len=140 n_labels=6 multi_label=True
+2026-08-11 11:35:16,709 INFO [app.services.fraud.model] fraud_model_predict n_categories=6 top=usurpation d'identité
+2026-08-11 11:35:16,710 INFO [app.services.fraud.service] fraud_analyze channel=SMS content_len=140 score=52 risk=HIGH n_signals=1 inference_ms=106.8 stub=false
+2026-08-11 11:35:16,710 INFO [app.routers.fraud] analyze_message channel=SMS content_len=140 score=52 risk=HIGH duration_ms=106.9 stub=False
+INFO:     127.0.0.1:50665 - "POST /ai/analyze-message HTTP/1.1" 200 OK

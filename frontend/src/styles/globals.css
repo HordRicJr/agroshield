@@ -1,0 +1,108 @@
+@import 'tailwindcss';
+
+@theme {
+  /* --- Famille de marque --- */
+  --color-brand-900: #14532d;
+  --color-brand-600: #2d8659;
+  --color-brand-50: #e6f4ec;
+
+  /* --- Secondaire : IA / analyse --- */
+  --color-ai-900: #1e3a5f;
+  --color-ai-50: #eaf1f8;
+
+  /* --- Famille de signal (réservée aux risques et alertes) --- */
+  --color-risk-low: #2f9e44;
+  --color-risk-medium: #f59f00;
+  --color-risk-high: #e8590c;
+  --color-risk-critical: #c92a2a;
+
+  /* --- Neutres --- */
+  --color-surface: #ffffff;
+  --color-canvas: #f7faf8;
+  --color-line: #dde5df;
+  --color-ink: #1b2b22;
+  --color-ink-muted: #5b6b60;
+  --color-ink-disabled: #a9b5ad;
+
+  /* --- Typographie --- */
+  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --text-metric: 2.75rem;
+  --text-metric--line-height: 1.05;
+  --text-metric--font-weight: 700;
+
+  /* --- Élévation --- */
+  --shadow-card: 0 1px 2px rgb(27 43 34 / 0.04), 0 8px 24px -12px rgb(27 43 34 / 0.12);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-canvas text-ink font-sans antialiased;
+    font-size: 15px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display text-ink;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-600;
+  }
+}
+
+@layer components {
+  /* Barre de défilement fine intégrée au fond vert de la navigation. */
+  .scrollbar-sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(255 255 255 / 0.16) transparent;
+    scrollbar-gutter: stable;
+    overscroll-behavior: contain;
+  }
+
+  .scrollbar-sidebar:hover {
+    scrollbar-color: rgb(255 255 255 / 0.3) transparent;
+  }
+
+  .scrollbar-sidebar::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .scrollbar-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-sidebar::-webkit-scrollbar-thumb {
+    background-color: rgb(255 255 255 / 0.16);
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: content-box;
+    transition: background-color 0.2s ease;
+  }
+
+  .scrollbar-sidebar:hover::-webkit-scrollbar-thumb {
+    background-color: rgb(255 255 255 / 0.3);
+  }
+
+  .scrollbar-sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(255 255 255 / 0.48);
+  }
+
+  /* Rail replié : trop étroit pour une gouttière, on masque sans bloquer le défilement. */
+  .scrollbar-rail {
+    scrollbar-width: none;
+    scrollbar-gutter: auto;
+    overscroll-behavior: contain;
+  }
+
+  .scrollbar-rail::-webkit-scrollbar {
+    width: 0;
+  }
+}

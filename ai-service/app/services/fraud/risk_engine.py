@@ -83,8 +83,11 @@ def compute_risk(
     if SignalType.CREDENTIAL_HARVEST in types or (has_fin and has_ben):
         final = max(final, 75)
 
-    # Si très peu de signaux et légitime fort → plafonner
-    if not signals and legit >= 0.65:
+    # Sans aucun signal de règle concret, le modèle seul ne doit jamais faire
+    # dépasser LOW : « les règles décident, l'IA appuie un signal déjà détecté,
+    # elle n'en invente pas un ». Le zero-shot est trop bruyant sur un texte
+    # court pour justifier une alerte à lui seul (cf. fraud-guard.md).
+    if not signals:
         final = min(final, 20)
 
     risk = score_to_risk_level(final)

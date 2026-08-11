@@ -106,7 +106,7 @@ public class DataShareService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PublicShareView resolvePublic(String rawToken) {
         if (rawToken == null || rawToken.isBlank()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Partage introuvable");
@@ -120,6 +120,10 @@ public class DataShareService {
         }
         FileMetadataEntity file = fileRepository.findById(share.getFileId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Fichier introuvable"));
+
+        auditService.recordAnonymous(
+                share.getOrganizationId(), null, "DATA_SHARE_ACCESS", "data_share", share.getId().toString(),
+                "SUCCESS", null, null, null);
 
         return new PublicShareView(
                 share.getLabel(),
