@@ -1,5 +1,7 @@
 target/
-data/
+# Uploaded files only (backend root). Do NOT use bare "data/" — it also hides
+# src/main/java/com/agroshield/application/data/
+/data/
 .idea/
 *.iml
 .classpath
