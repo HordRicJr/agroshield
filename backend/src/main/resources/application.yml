@@ -61,6 +61,11 @@ agroshield:
   storage:
     base-path: ${STORAGE_PATH:./data/files}
     max-file-bytes: ${STORAGE_MAX_BYTES:10485760}
+    encryption:
+      # Base64 of 32 raw bytes — replace in prod via STORAGE_MASTER_KEY_B64
+      enabled: ${STORAGE_ENCRYPTION_ENABLED:true}
+      master-key-base64: ${STORAGE_MASTER_KEY_B64:QWdyb1NoaWVsZExvY2FsRGV2S2V5MzJCeXRlc09LISE=}
+      key-id: ${STORAGE_KEY_ID:local-v1}
   auth-rate-limit:
     max-attempts: ${AUTH_MAX_ATTEMPTS:5}
     max-attempts-per-ip: ${AUTH_MAX_ATTEMPTS_PER_IP:30}

@@ -85,9 +85,27 @@ class ProductCoreFlowTest {
                         .header("Authorization", "Bearer " + access))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.sha256Hex").isNotEmpty())
+                .andExpect(jsonPath("$.data.encrypted").value(true))
+                .andExpect(jsonPath("$.data.encryptionAlg").value("AES-256-GCM"))
                 .andReturn();
         String fileId = objectMapper.readTree(upload.getResponse().getContentAsString())
                 .path("data").path("id").asText();
+
+        mockMvc.perform(get("/api/v1/files/" + fileId + "/content")
+                        .header("Authorization", "Bearer " + access))
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+                    String body = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+                    if (!body.contains("FR76SECRET")) {
+                        throw new AssertionError("Download must return plaintext after decrypt");
+                    }
+                });
+
+        mockMvc.perform(get("/api/v1/security/policies")
+                        .header("Authorization", "Bearer " + access))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[?(@.code=='ENCRYPT_AT_REST')].action").value(org.hamcrest.Matchers.hasItem("ENFORCE")))
+                .andExpect(jsonPath("$.data[?(@.code=='MASK_SENSITIVE_COLUMNS')].enabled").value(org.hamcrest.Matchers.hasItem(true)));
 
         MvcResult share = mockMvc.perform(post("/api/v1/shares")
                         .header("Authorization", "Bearer " + access)
@@ -96,7 +114,7 @@ class ProductCoreFlowTest {
                                 {
                                   "fileId": "%s",
                                   "label": "Partenaire coop",
-                                  "allowedColumns": ["parcelle","superficie"],
+                                  "allowedColumns": ["parcelle","superficie","iban"],
                                   "ttlMinutes": 30
                                 }
                                 """.formatted(fileId)))
@@ -134,7 +152,10 @@ class ProductCoreFlowTest {
         mockMvc.perform(get("/api/v1/public/shares/" + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.accessMode").value("METADATA_ONLY"))
+                .andExpect(jsonPath("$.data.fileEncrypted").value(true))
                 .andExpect(jsonPath("$.data.allowedColumns[0]").value("parcelle"))
+                .andExpect(jsonPath("$.data.maskedColumns").isArray())
+                .andExpect(jsonPath("$.data.maskedColumns").value(org.hamcrest.Matchers.hasItem("iban")))
                 .andExpect(jsonPath("$.data.originalName").value("rendements.csv"));
 
         mockMvc.perform(delete("/api/v1/shares/" + shareId)

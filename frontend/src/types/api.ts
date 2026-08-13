@@ -343,6 +343,8 @@ export interface FileMetadataView {
   contentType: string
   sizeBytes: number
   sha256Hex: string
+  encrypted: boolean
+  encryptionAlg: string | null
   createdAt: string
 }
 

@@ -39,7 +39,6 @@ logging:
     com.agroshield: DEBUG
     org.flywaydb: INFO
 
-# Démo : Argon2 plus léger (sinon chaque login échoué semble « bloqué »)
 agroshield:
   security:
     argon2:
@@ -48,3 +47,8 @@ agroshield:
       parallelism: 1
       salt-length: 16
       hash-length: 32
+  storage:
+    encryption:
+      enabled: true
+      master-key-base64: QWdyb1NoaWVsZExvY2FsRGV2S2V5MzJCeXRlc09LISE=
+      key-id: local-v1

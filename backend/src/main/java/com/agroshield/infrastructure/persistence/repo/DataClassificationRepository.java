@@ -10,6 +10,8 @@ import com.agroshield.infrastructure.persistence.entity.DataClassificationEntity
 
 public interface DataClassificationRepository extends JpaRepository<DataClassificationEntity, UUID> {
 
+    List<DataClassificationEntity> findByFileId(UUID fileId);
+
     List<DataClassificationEntity> findTop200ByOrganizationIdOrderByCreatedAtDesc(UUID organizationId);
 
     Optional<DataClassificationEntity> findByIdAndOrganizationId(UUID id, UUID organizationId);

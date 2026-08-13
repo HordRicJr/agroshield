@@ -53,7 +53,16 @@ public record AgroShieldProperties(
 
     public record StorageProperties(
             @NotBlank String basePath,
-            @Min(1024) long maxFileBytes
+            @Min(1024) long maxFileBytes,
+            EncryptionProperties encryption
+    ) {
+    }
+
+    /** AES-256-GCM at-rest. Master key = Base64 of exactly 32 raw bytes. */
+    public record EncryptionProperties(
+            boolean enabled,
+            @NotBlank String masterKeyBase64,
+            String keyId
     ) {
     }
 

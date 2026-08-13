@@ -68,13 +68,22 @@ public final class ShareDtos {
     ) {
     }
 
+    public record ColumnDisclosure(
+            String column,
+            String disclosure
+    ) {
+    }
+
     /** Vue publique : métadonnées + colonnes autorisées — jamais le binaire. */
     public record PublicShareView(
             String label,
             String originalName,
             long sizeBytes,
             String sha256Hex,
+            boolean fileEncrypted,
             List<String> allowedColumns,
+            List<String> maskedColumns,
+            List<ColumnDisclosure> columnDisclosures,
             Instant expiresAt,
             String accessMode
     ) {

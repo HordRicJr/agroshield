@@ -3,8 +3,6 @@ package com.agroshield.application.files;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -63,16 +61,17 @@ public class FileAnalyzeService {
 
         ClassifyDataResult classification = classifyDataService.classify(new ClassifyRequest(columns), fileId);
 
+        boolean needsEncrypt = classification.results() != null && classification.results().stream()
+                .anyMatch(r -> r.recommendedPolicy() != null && r.recommendedPolicy().encryptAtRest());
+        fileStorageService.encryptExistingIfNeeded(fileId, needsEncrypt);
+
+        FileMetadataEntity refreshed = fileStorageService.requireOwned(fileId);
         return new AnalyzeFileResult(
-                fileId, meta.getOriginalName(), table.rowCount(), table.headers().size(), classification);
+                fileId, refreshed.getOriginalName(), table.rowCount(), table.headers().size(), classification);
     }
 
     private byte[] readBytes(FileMetadataEntity meta) {
-        try {
-            return Files.readAllBytes(Path.of(meta.getStoragePath()));
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Lecture du fichier impossible");
-        }
+        return fileStorageService.readPlainBytes(meta);
     }
 
     private static String extensionOf(String name) {

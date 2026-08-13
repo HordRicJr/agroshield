@@ -50,9 +50,10 @@ POST /api/v1/alerts/{id}/acknowledge
 ```http
 POST/GET/PUT/DELETE /api/v1/producers
 POST/GET/PUT/DELETE /api/v1/farms
-POST/GET/DELETE     /api/v1/files   (+ GET /{id}/content)
+POST/GET/DELETE     /api/v1/files   (+ GET /{id}/content, POST /{id}/analyze)
 POST/GET/DELETE     /api/v1/shares
-GET                 /api/v1/public/shares/{token}   # métadonnées + colonnes — pas le fichier
+GET                 /api/v1/public/shares/{token}   # métadonnées + masking — pas le fichier
+GET                 /api/v1/security/policies       # ENCRYPT_AT_REST, MASK_SENSITIVE_COLUMNS
 ```
 
 - Upload local + `sha256` dans `file_metadata`

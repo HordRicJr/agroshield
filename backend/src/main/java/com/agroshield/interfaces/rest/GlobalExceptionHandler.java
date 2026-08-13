@@ -8,6 +8,7 @@ import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -86,6 +87,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleMissingPart(MissingServletRequestPartException ex) {
         return ResponseEntity.badRequest().body(ApiResponse.fail(
                 new ApiError("MISSING_PART", "Partie manquante : " + ex.getRequestPartName(), Map.of()),
+                requestId()));
+    }
+
+    /** Paramètre d'URL/chemin illisible dans le type attendu (ex : UUID invalide) — jamais une 500. */
+    @ExceptionHandler(TypeMismatchException.class)
+    public ResponseEntity<ApiResponse<Void>> handleTypeMismatch(TypeMismatchException ex) {
+        return ResponseEntity.badRequest().body(ApiResponse.fail(
+                new ApiError("INVALID_PARAMETER", "Paramètre invalide dans l'URL.", Map.of()),
                 requestId()));
     }
 

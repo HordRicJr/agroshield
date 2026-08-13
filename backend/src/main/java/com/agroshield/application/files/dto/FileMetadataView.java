@@ -9,6 +9,8 @@ public record FileMetadataView(
         String contentType,
         long sizeBytes,
         String sha256Hex,
+        boolean encrypted,
+        String encryptionAlg,
         Instant createdAt
 ) {
 }

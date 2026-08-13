@@ -33,6 +33,10 @@ agroshield:
   storage:
     base-path: ./target/test-files
     max-file-bytes: 1048576
+    encryption:
+      enabled: true
+      master-key-base64: QWdyb1NoaWVsZExvY2FsRGV2S2V5MzJCeXRlc09LISE=
+      key-id: test-v1
   auth-rate-limit:
     max-attempts: 5
     max-attempts-per-ip: 30

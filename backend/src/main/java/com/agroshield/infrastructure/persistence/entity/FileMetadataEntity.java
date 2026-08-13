@@ -40,6 +40,18 @@ public class FileMetadataEntity {
     @Column(name = "storage_path", nullable = false, length = 1024)
     private String storagePath;
 
+    @Column(nullable = false)
+    private boolean encrypted = false;
+
+    @Column(name = "encryption_alg", length = 32)
+    private String encryptionAlg;
+
+    @Column(name = "iv_b64", length = 64)
+    private String ivB64;
+
+    @Column(name = "key_id", length = 64)
+    private String keyId;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -119,6 +131,38 @@ public class FileMetadataEntity {
 
     public void setStoragePath(String storagePath) {
         this.storagePath = storagePath;
+    }
+
+    public boolean isEncrypted() {
+        return encrypted;
+    }
+
+    public void setEncrypted(boolean encrypted) {
+        this.encrypted = encrypted;
+    }
+
+    public String getEncryptionAlg() {
+        return encryptionAlg;
+    }
+
+    public void setEncryptionAlg(String encryptionAlg) {
+        this.encryptionAlg = encryptionAlg;
+    }
+
+    public String getIvB64() {
+        return ivB64;
+    }
+
+    public void setIvB64(String ivB64) {
+        this.ivB64 = ivB64;
+    }
+
+    public String getKeyId() {
+        return keyId;
+    }
+
+    public void setKeyId(String keyId) {
+        this.keyId = keyId;
     }
 
     public Instant getCreatedAt() {

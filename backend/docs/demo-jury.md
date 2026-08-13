@@ -25,9 +25,12 @@ Swagger : http://127.0.0.1:8080/swagger-ui.html
 - `POST /api/v1/farms` → lié au producteur
 - Dire : *gestion centralisée, isolée par organisation*
 
-### 3. Document + empreinte
+### 3. Document + empreinte + chiffrement
 - `POST /api/v1/files` (multipart CSV/Excel)
-- Montrer `sha256Hex` + métadonnées (pas le contenu en clair dans les logs)
+- Montrer `sha256Hex` + **`encrypted: true`** + `encryptionAlg: AES-256-GCM`
+- Dire : *empreinte du clair, octets chiffrés sur disque*
+- `GET /api/v1/files/{id}/content` → clair seulement si JWT autorisé (déchiffrement mémoire)
+- `GET /api/v1/security/policies` → `ENCRYPT_AT_REST` / `MASK_SENSITIVE_COLUMNS` ENFORCE
 
 ### 4. Partage sélectif (point fort checklist)
 - `POST /api/v1/shares` body (camelCase **ou** snake_case) :
@@ -35,14 +38,14 @@ Swagger : http://127.0.0.1:8080/swagger-ui.html
   {
     "fileId": "<uuid-fichier>",
     "label": "Partenaire coop",
-    "allowedColumns": ["parcelle", "superficie"],
+    "allowedColumns": ["parcelle", "superficie", "iban"],
     "ttlMinutes": 60
   }
   ```
   Équivalent accepté : `file_id`, `allowed_columns`, `ttl_minutes`
 - Réponse : `token` + `publicPath` (ex. `/api/v1/public/shares/{token}`)
 - Ouvrir **sans JWT** : `GET {publicPath}`
-- Insister : **`accessMode: METADATA_ONLY`** — colonnes autorisées, **pas le fichier complet**
+- Insister : **`accessMode: METADATA_ONLY`**, `fileEncrypted: true`, `maskedColumns` contient `iban`
 - `GET /api/v1/shares` → liste des partages org
 - `DELETE /api/v1/shares/{id}` → révocation → le lien public tombe
 
@@ -69,7 +72,7 @@ Swagger : http://127.0.0.1:8080/swagger-ui.html
 - *Isolation multi-tenant : chaque coop ne voit que son org.*
 
 ## Ne pas promettre (roadmap)
-- MFA / step-up
+- MFA / step-up / OTP
 - Anomaly detection branchée sur login
-- Politiques `security_policies` actives
 - Déploiement Hugging Face Spaces (compte PRO)
+- Rotation automatique multi-clés (KEK/DEK cloud)

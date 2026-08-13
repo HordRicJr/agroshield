@@ -18,6 +18,7 @@ import com.agroshield.application.auth.dto.MeResponse;
 import com.agroshield.application.auth.dto.RefreshRequest;
 import com.agroshield.application.auth.dto.RegisterRequest;
 import com.agroshield.application.auth.dto.TokenResponse;
+import com.agroshield.application.policy.SecurityPolicyService;
 import com.agroshield.domain.security.ContentHasher;
 import com.agroshield.domain.security.PasswordHasher;
 import com.agroshield.infrastructure.persistence.entity.OrganizationEntity;
@@ -50,6 +51,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final LoginAttemptService loginAttemptService;
     private final AuditService auditService;
+    private final SecurityPolicyService securityPolicyService;
 
     public AuthService(
             UserRepository userRepository,
@@ -62,7 +64,8 @@ public class AuthService {
             ContentHasher contentHasher,
             JwtService jwtService,
             LoginAttemptService loginAttemptService,
-            AuditService auditService) {
+            AuditService auditService,
+            SecurityPolicyService securityPolicyService) {
         this.userRepository = userRepository;
         this.organizationRepository = organizationRepository;
         this.memberRepository = memberRepository;
@@ -74,6 +77,7 @@ public class AuthService {
         this.jwtService = jwtService;
         this.loginAttemptService = loginAttemptService;
         this.auditService = auditService;
+        this.securityPolicyService = securityPolicyService;
     }
 
     @Transactional
@@ -102,6 +106,8 @@ public class AuthService {
         member.setUserId(user.getId());
         member.setRoleId(role.getId());
         memberRepository.save(member);
+
+        securityPolicyService.seedDefaults(org.getId());
 
         return issueTokens(user, org.getId(), List.of(DEFAULT_ROLE));
     }
